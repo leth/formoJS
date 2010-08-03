@@ -6,6 +6,10 @@ FormoJS is a Kohana module which adds live validation feedback to forms built wi
 
 FormoJS is not a replacement for server-side Formo validation. While it is possible to do validation in javascript on the client side, the nature of the web is such that client-side validation should never be relied upon.
 
+# Demo #
+
+A demo application can be found at <http://kohana.cowuu.be/formojs/>.
+
 # Developing #
 
 When committing changes to any of the static javascript files, please also commit an updated compressed version using the YUI compressor.
