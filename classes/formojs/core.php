@@ -38,8 +38,8 @@ class FormoJS_Core {
 	public static function libs()
 	{
 		if (Kohana::$environment == Kohana::DEVELOPMENT)
-			return HTML::script('formojs/config') . HTML::script('formojs/js/mootools.js');
+			return HTML::script('formojs/config') ."\n". HTML::script('formojs/js/mootools.js');
 		else
-			return HTML::script('formojs/config') . HTML::script('formojs/js/mootools-yc.js');
+			return HTML::script('formojs/config') ."\n". HTML::script('formojs/js/mootools-yc.js');
 	}
 }
