@@ -1,3 +1,5 @@
+alert('Sorry, FormoJS jQuery support isn\'t ready yet.');
+
 if (typeof FormoJS == 'undefined')
 	FormoJS = {};
 	
