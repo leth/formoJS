@@ -14,30 +14,56 @@ FormoJS.Form = new Class({
 	{
 		this.element = element;
 		// look for fields within this form
-		element.getElements('input[type!=submit]')
-			.each(function (field) {
-				var fieldObj = new FormoJS.Field(field, this);
-				this.fields.push(fieldObj);
-				// TODO future feature
-				// field.startFocusTracking(this);
-				field.addEvent('change', this.field_blurred.bindWithEvent(this, [field, fieldObj]));
-				field.addEvent('keypress', this.field_keypress.bindWithEvent(this, [field, fieldObj]));
+		element.getElements('p.field')
+			.each(function (block) {
+				var classes =  block.get('class').split(' ');
+			
+				var field = null;
+				switch (classes[1])
+				{
+					case 'text':
+					default:
+						field = new FormoJS.Field(block, this);
+				}
+				
+				this.fields.push(field);
 			}, this);
+	}
+});
+
+FormoJS.Field = new Class({
+	elem_block: null,
+	elem_input: null,
+	form:    null,
+	request: null,
+	data:    null,
+
+	initialize: function (block, form)
+	{
+		this.elem_block = block;
+		this.elem_input = block.getElement('input');
+		this.form = form;
+		
+		this.elem_input.addEvent('change', this.field_blurred.bindWithEvent(this));
+		this.elem_input.addEvent('keypress', this.field_keypress.bindWithEvent(this));
+		
+		// TODO future feature
+		// field.startFocusTracking(form);
 	},
 	
 	// Delay timer on keypresses
 	keypress_timer: null,
 	
-	field_blurred: function (event, field, fieldObj)
+	field_blurred: function (event)
 	{
 		// Clear any remaining timer events on this field
 		if (this.keypress_timer != null)
 			$clear(this.keypress_timer);
 		
-		fieldObj.validate();
+		this.validate();
 	},
 	
-	field_keypress: function (event, field, fieldObj)
+	field_keypress: function (event)
 	{
 		// Clear the timer if it was already started
 		if (this.keypress_timer != null)
@@ -45,34 +71,16 @@ FormoJS.Form = new Class({
 		
 		// Start a new timer
 		this.keypress_timer = (function () {
-			fieldObj.validate();
-		}).delay(1500);
-	}
-	
-});
-
-FormoJS.Field = new Class({
-	element: null,
-	form:    null,
-	request: null,
-	data:    null,
-
-	initialize: function (element, form)
-	{
-		this.element = element;
-		this.form = form;
-	},
-	
-	get_block: function () {
-		return this.element.getParent().getParent().getParent();
+			this.validate();
+		}).bind(this).delay(1500);
 	},
 	
 	validate: function ()
 	{
-		var block = this.get_block();
+		var block = this.elem_block;
 		var self = this;
 		
-		var data = 'field=' + this.element.name + '&value=' + this.element.value;
+		var data = 'field=' + this.elem_input.name + '&value=' + this.elem_input.value;
 
 		// Don't validate the same data twice
 		if (data == this.data)
@@ -126,7 +134,7 @@ FormoJS.Field = new Class({
 	
 	set_message: function (message)
 	{
-		this.get_block().getElement('.error-message').set('html', message);
+		this.elem_block.getElement('.error-message').set('html', message);
 	}
 });
 
